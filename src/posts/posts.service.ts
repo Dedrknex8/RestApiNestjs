@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import {Post} from '../interface/post.interface'
 import { single } from 'rxjs';
+import { error } from 'console';
 @Injectable()
 export class PostsService {
     private posts : Post[]= [
@@ -54,5 +55,17 @@ export class PostsService {
         }
 
         return this.posts[currentPostIdx]
+    }
+
+    deletePost(id:number){
+        const itemToBeDeleted = this.posts.findIndex(post=> post.id === id)
+
+        if(!itemToBeDeleted){
+            throw new NotFoundException('Post cannt be found with this id')
+
+        }
+
+        const [deletedpost] = this.posts.splice(itemToBeDeleted,1)
+        return deletedpost;
     }
 }
