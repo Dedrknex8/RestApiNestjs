@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import {Post as PostInterface}  from  '../interface/post.interface'
 @Controller('posts')
@@ -24,7 +24,11 @@ export class PostsController {
             return this.postService.updatePost(id,updatePostData)
         } //ParseIntPipe is used to convert string into integer
 
-
+        @Delete(':id')
+        @HttpCode(201)
+        delePost(@Param('id',ParseIntPipe) id:number){
+            return this.postService.deletePost(id)
+        }
 
         
         

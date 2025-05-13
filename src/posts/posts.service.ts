@@ -57,15 +57,18 @@ export class PostsService {
         return this.posts[currentPostIdx]
     }
 
-    deletePost(id:number){
+    deletePost(id:number):{message : string, deletedpost: Post}{
         const itemToBeDeleted = this.posts.findIndex(post=> post.id === id)
 
-        if(!itemToBeDeleted){
+        if(itemToBeDeleted === -1){
             throw new NotFoundException('Post cannt be found with this id')
 
         }
 
-        const [deletedpost] = this.posts.splice(itemToBeDeleted,1)
-        return deletedpost;
+        const [deletedpost] = this.posts.splice(itemToBeDeleted,1);
+        return {
+            message : 'Post deleted successfully',
+            deletedpost
+        };
     }
 }
