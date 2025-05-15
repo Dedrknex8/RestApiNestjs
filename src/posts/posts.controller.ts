@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPip
 import { PostsService } from './posts.service';
 import {Post as PostInterface}  from  '../interface/post.interface'
 import { CreatePostDto } from './dto/createPost.dto';
+import { UpdatePostDto } from './dto/updatePost.dto';
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService : PostsService ){}
@@ -21,7 +22,7 @@ export class PostsController {
 
         @Put(':id')
         @HttpCode(200)
-        update(@Param('id',ParseIntPipe)id:number,@Body() updatePostData: Partial<Omit<PostInterface,'id' | 'createdAt'>>): PostInterface{
+        update(@Param('id',ParseIntPipe)id:number,@Body() updatePostData: UpdatePostDto): PostInterface{
             return this.postService.updatePost(id,updatePostData)
         } //ParseIntPipe is used to convert string into integer
 
