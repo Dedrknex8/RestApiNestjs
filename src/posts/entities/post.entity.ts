@@ -12,7 +12,7 @@ export class Post {
     content : string;
 
     @Column()
-    authername : string;
+    authorname : string;
 
     @CreateDateColumn()
     createdAt : Date;

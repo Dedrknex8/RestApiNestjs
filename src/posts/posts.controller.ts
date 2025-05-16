@@ -11,7 +11,7 @@ export class PostsController {
             return this.postService.findAll()
         }
         @Get(':id')
-        findOne(@Param('id', ParseIntPipe)id : Number): PostInterface{
+        findOne(@Param('id', ParseIntPipe)id : number): PostInterface{
             return this.postService.findSinglePost(id)
         }
         @Post()
