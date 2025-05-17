@@ -5,6 +5,8 @@ import { PostsModule } from './posts/posts.module';
 import {TypeOrmModule} from '@nestjs/typeorm'
 import { Post } from './posts/entities/post.entity';
 import {ConfigModule,ConfigService} from '@nestjs/config'
+import { AuthModule } from './auth/auth.module';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -22,7 +24,8 @@ import {ConfigModule,ConfigService} from '@nestjs/config'
       synchronize : true // disable in production mode it creates data everytime app launches
 
     }),
-    PostsModule],
+    PostsModule,
+    AuthModule],
   controllers: [AppController],
   providers: [AppService],
 })
