@@ -1,11 +1,12 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Post } from "src/posts/entities/post.entity";
+import { Column, CreateDateColumn, Entity, OneToMany, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 export enum Role{
     User = 'user',
     Admin = 'admin'
 }
 @Entity()
-export class Auth{
+export class User{
     @PrimaryGeneratedColumn()
     id : number
 
@@ -25,5 +26,16 @@ export class Auth{
     })
 
     role : string
+
+    //Now making a realation with Postr
+
+    @OneToMany(() => Post, (post)=> post.authorname)
+    posts : Post[]
+
+    @CreateDateColumn()
+    createdAt : Date;
+
+    @UpdateDateColumn()
+    updatedAt : Date;
     
 }

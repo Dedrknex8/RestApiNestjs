@@ -6,6 +6,7 @@ import {TypeOrmModule} from '@nestjs/typeorm'
 import { Post } from './posts/entities/post.entity';
 import {ConfigModule,ConfigService} from '@nestjs/config'
 import { AuthModule } from './auth/auth.module';
+import { User } from './auth/entity/user.entities';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { AuthModule } from './auth/auth.module';
       password : 'root',
       database : 'NestJsTest',
       //entity means model
-      entities : [Post],
+      entities : [Post,User], //make sure to import/delcare all entities here
       synchronize : true // disable in production mode it creates data everytime app launches
 
     }),
