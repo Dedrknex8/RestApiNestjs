@@ -8,7 +8,7 @@ export class Post {
     @Column({length : 50})
     title : string;
 
-    @Column({length : 10})
+    @Column({length : 50})
     content : string;
 
     @Column()

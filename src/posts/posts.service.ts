@@ -54,9 +54,11 @@ export class PostsService {
         
     }
 
-    async deletePost(id:number):Promise<void>{
+    async deletePost(id:number):Promise<{message : string}>{
         const itemToBeDeleted  = await this.findSinglePost(id)
 
         await this.postRespository.remove(itemToBeDeleted);
+        
+        return {message : `Post deleted with ${id} successfully`}
     }
 }
