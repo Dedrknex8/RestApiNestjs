@@ -10,7 +10,7 @@ email
 username
 
 @IsNotEmpty({message : "password field cannot be empty"})
-@MinLength(7,{message : "password cannot have more 8 characters long"})
+
 password
 
 }
