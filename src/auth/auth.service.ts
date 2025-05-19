@@ -91,7 +91,7 @@ export class AuthService {
         }
 
         //if user exists then match password
-        const tokens = await this.generateToken(user);
+        const tokens =  this.generateToken(user);
 
         const {password, ...result} = user;
 
@@ -124,13 +124,18 @@ export class AuthService {
             throw new UnauthorizedException('Invalid Token')
         }
     }
-    async generateToken(User : User): string{
+    async generateToken(User : User): Promise<{accessToken:string,refreshToken:string}>{
 
-        const accessToken = this.generateAccessToken(User);
-        const refreshToken = this.generateRefreshToken(User);
+        const accessToken = await this.generateAccessToken(User);
+        const refreshToken = await this.generateRefershToken(User);
+
+        return {
+            accessToken,
+            refreshToken
+        }
     }
 
-    async generateAccessToken(User:User) : string {
+    async generateAccessToken(User:User) : Promise<string> {
         // this token will consits email,id, role
 
         const payload = {
@@ -144,7 +149,7 @@ export class AuthService {
             expiresIn : '15m'
         })
     }
-    async generateRefershToken(User:User) : string {
+    async generateRefershToken(User:User) : Promise<string> {
         const payload = {
             id : User.id
         }
