@@ -1,4 +1,4 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entity/user.entities';
 import { Repository } from 'typeorm';
@@ -6,11 +6,14 @@ import { RegisterDto } from './dto/register.user.dto';
 import * as bcrypt from 'bcrypt'
 import { LoginDto } from './dto/login.user.dto';
 import { NotFoundError } from 'rxjs';
+import { ParamsTokenFactory } from '@nestjs/core/pipes';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
-        private userRepo : Repository<User>
+        private userRepo : Repository<User>,
+        private jwtService : JwtService
     ){}
 
     async registerUser(RegisterDto : RegisterDto){
@@ -79,15 +82,80 @@ export class AuthService {
     async loginUser(loginDto : LoginDto){
 
         //check if user with this data is exists or not
-        const userExists = this.userRepo.findOne({
+        const user = await this.userRepo.findOne({
             where : {email : loginDto.email}
         });
 
-        if(!userExists){
-            throw new NotFoundError('User cannot be found')
+        if(!user || !(await this.verifypassword(loginDto.password,user.password))){
+            throw new UnauthorizedException("Either the email or password is not exists")
         }
 
         //if user exists then match password
+        const tokens = await this.generateToken(user);
 
+        const {password, ...result} = user;
+
+        return {
+            user,
+            ...tokens
+        }
+    }
+
+    async refreshToken(refreshToken : string){
+        try {
+
+            const paylaod = this.jwtService.verify(refreshToken, {
+                secret : 'JwtRefreshSecret'
+            })
+
+            const user = await this.userRepo.findOne({
+                where : {id : paylaod.id}
+            })
+
+            if(!user){
+                throw new UnauthorizedException('Invalid token')
+            }
+
+            const accessToken = this.generateAccessToken(user)
+
+            return {accessToken};
+            
+        } catch (error) {
+            throw new UnauthorizedException('Invalid Token')
+        }
+    }
+    async generateToken(User : User): string{
+
+        const accessToken = this.generateAccessToken(User);
+        const refreshToken = this.generateRefreshToken(User);
+    }
+
+    async generateAccessToken(User:User) : string {
+        // this token will consits email,id, role
+
+        const payload = {
+            email : User.email,
+            id : User.id,
+            Role : User.role
+        }
+
+        return this.jwtService.sign({
+            secret : 'JwtSecret',
+            expiresIn : '15m'
+        })
+    }
+    async generateRefershToken(User:User) : string {
+        const payload = {
+            id : User.id
+        }
+
+        return this.jwtService.sign({
+            secret : 'JwtRefreshSecret',
+            expiresIn : '7d'
+        })
+    }
+
+    async verifypassword(plainPassword:string,hashedPassword:string): Promise<boolean>{
+        return await bcrypt.compare(plainPassword,hashedPassword);
     }
 }
