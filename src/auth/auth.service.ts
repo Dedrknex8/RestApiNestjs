@@ -6,7 +6,6 @@ import { RegisterDto } from './dto/register.user.dto';
 import * as bcrypt from 'bcrypt'
 import { LoginDto } from './dto/login.user.dto';
 import { NotFoundError } from 'rxjs';
-import { ParamsTokenFactory } from '@nestjs/core/pipes';
 import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AuthService {
@@ -91,12 +90,12 @@ export class AuthService {
         }
 
         //if user exists then match password
-        const tokens =  this.generateToken(user);
+        const tokens =  await this.generateToken(user);
 
         const {password, ...result} = user;
 
         return {
-            user,
+            user : result,
             ...tokens
         }
     }
