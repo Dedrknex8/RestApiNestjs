@@ -1,4 +1,4 @@
-import { Body, Controller, Post, Put } from '@nestjs/common';
+import { Body, Controller, Post, Put, UnauthorizedException } from '@nestjs/common';
 import { RegisterDto } from './dto/register.user.dto';
 import { User as UserEntity } from './entity/user.entities';
 import { AuthService } from './auth.service';
@@ -23,6 +23,9 @@ async loginUser(@Body() LoginDto:LoginDto){
 @Post('refresh-token')
     async refreshAccessToken(@Body('refreshToken') refreshToken : string ){
         const token = this.authservice.refreshToken(refreshToken)
+        if(!token){
+            throw new UnauthorizedException("TOken cannot be validated")
+        }
         return token;
     }
 }

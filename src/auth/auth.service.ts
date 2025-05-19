@@ -102,7 +102,6 @@ export class AuthService {
 
     async refreshToken(refreshToken : string){
         try {
-
             const paylaod = this.jwtService.verify(refreshToken, {
                 secret : 'JwtRefreshSecret'
             })
@@ -115,12 +114,13 @@ export class AuthService {
                 throw new UnauthorizedException('Invalid token')
             }
 
-            const accessToken = this.generateAccessToken(user)
+            const accessToken = await this.generateAccessToken(user)
 
             return {accessToken};
             
         } catch (error) {
-            throw new UnauthorizedException('Invalid Token')
+            console.error(error)
+            throw new UnauthorizedException('Invalid Token is not valid')
         }
     }
     async generateToken(User : User): Promise<{accessToken:string,refreshToken:string}>{
@@ -143,7 +143,7 @@ export class AuthService {
             Role : User.role
         }
 
-        return this.jwtService.sign({
+        return this.jwtService.sign(payload,{
             secret : 'JwtSecret',
             expiresIn : '15m'
         })
@@ -153,7 +153,7 @@ export class AuthService {
             id : User.id
         }
 
-        return this.jwtService.sign({
+        return this.jwtService.sign(payload,{
             secret : 'JwtRefreshSecret',
             expiresIn : '7d'
         })
