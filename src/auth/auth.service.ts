@@ -8,12 +8,14 @@ import { LoginDto } from './dto/login.user.dto';
 import { NotFoundError } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 import { resourceLimits } from 'worker_threads';
+import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private userRepo : Repository<User>,
-        private jwtService : JwtService
+        private jwtService : JwtService,
+        private ConfigService : ConfigService
     ){}
 
     async registerUser(RegisterDto : RegisterDto){
@@ -159,7 +161,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload,{
-            secret : 'JwtSecret',
+            secret : this.ConfigService.getOrThrow('JWT_SECRET') ,
             expiresIn : '15m'
         })
     }
@@ -169,7 +171,7 @@ export class AuthService {
         }
 
         return this.jwtService.sign(payload,{
-            secret : 'JwtRefreshSecret',
+            secret : this.ConfigService.getOrThrow('JWT_REFRESH_SECRET'),
             expiresIn : '7d'
         })
     }
