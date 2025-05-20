@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entity/user.entities';
 import { Repository } from 'typeorm';
@@ -131,6 +131,16 @@ export class AuthService {
         return {
             accessToken,
             refreshToken
+        }
+    }
+
+    async getUserById(userId : number){
+        const getUser = await this.userRepo.findOne({
+            where : {id : userId }
+        })
+
+        if(!getUser){
+            throw new NotFoundException('User with this id is not available')
         }
     }
 
