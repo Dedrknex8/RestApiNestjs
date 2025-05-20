@@ -1,9 +1,11 @@
-import { Body, Controller, Post, Put, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { RegisterDto } from './dto/register.user.dto';
 import { User as UserEntity } from './entity/user.entities';
 import { AuthService } from './auth.service';
 import { register } from 'module';
 import { LoginDto } from './dto/login.user.dto';
+import { JwtAuthGuard } from './guards/auth.guard';
+import { getCurrentUser } from './Decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -28,5 +30,11 @@ async loginUser(@Body() LoginDto:LoginDto){
         }
         return token;
     }
+
+@UseGuards(JwtAuthGuard)
+@Get('profile')
+getprofile(@getCurrentUser() user:any) {
+    return user;
+}
 }
 
