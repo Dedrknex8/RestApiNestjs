@@ -7,6 +7,7 @@ import * as bcrypt from 'bcrypt'
 import { LoginDto } from './dto/login.user.dto';
 import { NotFoundError } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
+import { resourceLimits } from 'worker_threads';
 @Injectable()
 export class AuthService {
     constructor(
@@ -142,6 +143,10 @@ export class AuthService {
         if(!getUser){
             throw new NotFoundException('User with this id is not available')
         }
+
+        const {password, ...result} =  getUser;
+
+        return result;
     }
 
     async generateAccessToken(User:User) : Promise<string> {
