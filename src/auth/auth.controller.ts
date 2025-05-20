@@ -1,11 +1,13 @@
 import { Body, Controller, Get, Post, Put, UnauthorizedException, UseGuards } from '@nestjs/common';
 import { RegisterDto } from './dto/register.user.dto';
-import { User as UserEntity } from './entity/user.entities';
+import { Role, User as UserEntity } from './entity/user.entities';
 import { AuthService } from './auth.service';
 import { register } from 'module';
 import { LoginDto } from './dto/login.user.dto';
 import { JwtAuthGuard } from './guards/auth.guard';
 import { getCurrentUser } from './Decorators/user.decorator';
+import { Roles } from './Decorators/roles.decorators';
+import { RolesGuards } from './guards/role.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -36,5 +38,12 @@ async loginUser(@Body() LoginDto:LoginDto){
 getprofile(@getCurrentUser() user:any) {
     return user;
 }
+
+@Post('create-admin')
+ @Roles(Role.Admin)
+ @UseGuards(JwtAuthGuard,RolesGuards)
+    createAdmin(@Body() registerDto:RegisterDto){
+        return this.authservice.createAdminUser(registerDto)
+    }
 }
 
