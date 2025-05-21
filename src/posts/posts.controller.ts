@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import {Post as PostInterface}  from  '../interface/post.interface'
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { Post as PostEntity} from './entities/post.entity';
 import { getCurrentUser } from 'src/auth/Decorators/user.decorator';
+import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
+import { Role } from 'src/auth/entity/user.entities';
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService : PostsService ){}
@@ -16,10 +18,12 @@ export class PostsController {
         async findOne(@Param('id', ParseIntPipe)id : number): Promise<PostEntity>{
             return this.postService.findSinglePost(id)
         }
+
+        @UseGuards(JwtAuthGuard)
         @Post()
         @HttpCode(HttpStatus.CREATED)
-        async create(@Body() createPostData : CreatePostDto) : Promise<PostEntity>{
-            return this.postService.createPost(createPostData)
+        async create(@Body() createPostData : CreatePostDto, @getCurrentUser() user:any) : Promise<PostEntity>{
+            return this.postService.createPost(createPostData,user)
         }
 
         @Put(':id')
@@ -27,9 +31,10 @@ export class PostsController {
         async update(
             @Param('id',ParseIntPipe)id:number,
             @Body() updatePostData: UpdatePostDto,
-            @getCurrentUser('id') userId : number
+            @getCurrentUser('id') userId : number,
+            @getCurrentUser('role') userrole: Role,
         ): Promise<PostEntity>{
-            return this.postService.updatePost(id,updatePostData,userId)
+            return this.postService.updatePost(id,updatePostData,userId,userrole);
         } //ParseIntPipe is used to convert string into integer
 
         @Delete(':id')
