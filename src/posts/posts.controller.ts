@@ -6,7 +6,9 @@ import { UpdatePostDto } from './dto/updatePost.dto';
 import { Post as PostEntity} from './entities/post.entity';
 import { getCurrentUser } from 'src/auth/Decorators/user.decorator';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
-import { Role } from 'src/auth/entity/user.entities';
+import { Role, User } from 'src/auth/entity/user.entities';
+import { Roles } from 'src/auth/Decorators/roles.decorators';
+import { RolesGuards } from 'src/auth/guards/role.guard';
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService : PostsService ){}
@@ -36,7 +38,8 @@ export class PostsController {
         ): Promise<PostEntity>{
             return this.postService.updatePost(id,updatePostData,userId,userrole);
         } //ParseIntPipe is used to convert string into integer
-
+        @Roles(Role.Admin)
+        @UseGuards(JwtAuthGuard,RolesGuards)
         @Delete(':id')
         @HttpCode(201)
         async delePost(@Param('id',ParseIntPipe) id:number) {
