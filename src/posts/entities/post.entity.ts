@@ -12,9 +12,8 @@ export class Post {
     @Column({length : 50})
     content : string;
 
-
     @ManyToOne(()=>User , (user)=> user.posts)
-    authorname : User;
+    authorname : User; //realtion to connect with user 
 
     @CreateDateColumn()
     createdAt : Date;

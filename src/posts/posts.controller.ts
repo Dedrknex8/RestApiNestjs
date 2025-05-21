@@ -4,6 +4,7 @@ import {Post as PostInterface}  from  '../interface/post.interface'
 import { CreatePostDto } from './dto/createPost.dto';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { Post as PostEntity} from './entities/post.entity';
+import { getCurrentUser } from 'src/auth/Decorators/user.decorator';
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService : PostsService ){}
@@ -23,8 +24,12 @@ export class PostsController {
 
         @Put(':id')
         @HttpCode(200)
-        async update(@Param('id',ParseIntPipe)id:number,@Body() updatePostData: UpdatePostDto): Promise<PostEntity>{
-            return this.postService.updatePost(id,updatePostData)
+        async update(
+            @Param('id',ParseIntPipe)id:number,
+            @Body() updatePostData: UpdatePostDto,
+            @getCurrentUser('id') userId : number
+        ): Promise<PostEntity>{
+            return this.postService.updatePost(id,updatePostData,userId)
         } //ParseIntPipe is used to convert string into integer
 
         @Delete(':id')

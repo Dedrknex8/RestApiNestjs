@@ -1,4 +1,4 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { single } from 'rxjs';
 import { error } from 'console';
 import { Repository } from 'typeorm';
@@ -7,6 +7,7 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { title } from 'process';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { InjectRepository } from '@nestjs/typeorm';
+import { User } from 'src/auth/entity/user.entities';
 @Injectable()
 export class PostsService {
     // private posts : Post[]= [
@@ -24,33 +25,45 @@ export class PostsService {
     ){}
 
     async findAll() : Promise<Post[]>{
-        return this.postRespository.find();
+        return this.postRespository.find({
+            relations : ['authorname']
+        });
     }
     async findSinglePost(id:number) : Promise<Post>{
-        const singlePost = await  this.postRespository.findOneBy({id})
+        const singlePost = await  this.postRespository.findOne({
+            where : {id},
+            relations : ['authorname'] //added realtion b\w psot and author
+        })
         if(!singlePost){
             throw new NotFoundException(`Post with this ${id} is not found`);
         }
         return singlePost;
     };
 
-    async createPost(createPostData : CreatePostDto) : Promise<Post>{
+    async createPost(createPostData : CreatePostDto, authorname : User) : Promise<Post>{
         const newPost  = await this.postRespository.create({
             title : createPostData.title,
             content : createPostData.content,
-            authorname : createPostData.authorname,
+            authorname, //make raltion to user enitty
         })
         return this.postRespository.save(newPost);
 
 
     }
     
-    async updatePost(id: number, updatePostData : UpdatePostDto ) :Promise<Post>{
-        const currentPostIdx = await this.findSinglePost(id)
+    async updatePost(id: number, updatePostData : UpdatePostDto,userId :number ) :Promise<Post>{
+        const currentPost  = await this.postRespository.findOne({
+            where : {id},
+            relations : ['authorname']
+        })
 
-        Object.assign(currentPostIdx,updatePostData)
+        if(!currentPost){
+            throw new ForbiddenException("You're not allowed to edit this post");
+        }
 
-        return this.postRespository.save(currentPostIdx);
+        Object.assign(currentPost,updatePostData)
+
+        return this.postRespository.save(currentPost);
         
     }
 
