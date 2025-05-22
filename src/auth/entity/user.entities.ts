@@ -16,7 +16,7 @@ export class User{
     @Column({length : 15})
     username : string
 
-    @Column()
+    @Column({select : false}) //this will not include password without explicitly calling it
     password : string //hashed passwd
 
     @Column({
