@@ -7,7 +7,7 @@ import { CreatePostDto } from './dto/createPost.dto';
 import { title } from 'process';
 import { UpdatePostDto } from './dto/updatePost.dto';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/auth/entity/user.entities';
+import { Role, User } from 'src/auth/entity/user.entities';
 @Injectable()
 export class PostsService {
     // private posts : Post[]= [
@@ -51,14 +51,22 @@ export class PostsService {
 
     }
     
-    async updatePost(id: number, updatePostData : UpdatePostDto,userId :number ) :Promise<Post>{
+    async updatePost(id: number, updatePostData : UpdatePostDto,userId :number,userRole: Role ) :Promise<Post>{
         const currentPost  = await this.postRespository.findOne({
             where : {id},
             relations : ['authorname']
         })
 
-        if(!currentPost){
+        if(!currentPost){  
             throw new ForbiddenException("You're not allowed to edit this post");
+        }
+
+        const isOwner = currentPost.authorname.id === userId;
+
+        const isAdmin = userRole == Role.Admin; // it's make sure that you're an admin user
+        
+        if(!isOwner && !isAdmin){
+            throw new ForbiddenException('Invalid Permission');
         }
 
         Object.assign(currentPost,updatePostData)

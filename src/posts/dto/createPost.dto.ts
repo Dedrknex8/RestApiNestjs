@@ -14,8 +14,8 @@ export class CreatePostDto{
     @MinLength(3, {message : "Content must be of 3 Characters long" })
     content : string
 
-    @IsNotEmpty({message : "authorname can't be empty"})
-    @IsString({message : "authorname must be a string"})
-    @MinLength(3, {message : "authorname must be of 3 Characters long" })
-    authorname : string
+    // @IsNotEmpty({message : "authorname can't be empty"})
+    // @IsString({message : "authorname must be a string"})
+    // @MinLength(3, {message : "authorname must be of 3 Characters long" })
+    // authorname : string
 }
