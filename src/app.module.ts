@@ -7,11 +7,18 @@ import { Post } from './posts/entities/post.entity';
 import {ConfigModule,ConfigService} from '@nestjs/config'
 import { AuthModule } from './auth/auth.module';
 import { User } from './auth/entity/user.entities';
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
     isGlobal : true
+  }),
+  ThrottlerModule.forRoot({
+    throttlers : [{
+      ttl : 6000, //in milliSecond
+      limit : 10, // 10 means 10 limit per user
+    }]
   }),
     TypeOrmModule.forRoot({
       type : 'postgres',

@@ -8,6 +8,7 @@ import { JwtAuthGuard } from './guards/auth.guard';
 import { getCurrentUser } from './Decorators/user.decorator';
 import { Roles } from './Decorators/roles.decorators';
 import { RolesGuards } from './guards/role.guard';
+import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
 
 @Controller('auth')
 export class AuthController {
@@ -19,6 +20,7 @@ async RegisterUser(@Body() RegisterDto : RegisterDto){
     return this.authservice.registerUser(RegisterDto)
 }
 
+@UseGuards(LoginThrottlerClass)
 @Post('login')
 async loginUser(@Body() LoginDto:LoginDto){
     return this.authservice.loginUser(LoginDto)

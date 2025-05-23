@@ -1,4 +1,4 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entity/user.entities';
 import { Repository } from 'typeorm';
@@ -85,7 +85,8 @@ export class AuthService {
 
         //check if user with this data is exists or not
         const user = await this.userRepo.findOne({
-            where : {email : loginDto.email}
+            where : {email : loginDto.email},
+            select : ['password']
         });
 
         if(!user || !(await this.verifypassword(loginDto.password,user.password))){
@@ -177,6 +178,10 @@ export class AuthService {
     }
 
     async verifypassword(plainPassword:string,hashedPassword:string): Promise<boolean>{
+        
+        if(!plainPassword || !hashedPassword){
+            throw new BadRequestException('Password comprasion failed');
+        }
         return await bcrypt.compare(plainPassword,hashedPassword);
     }
 }
