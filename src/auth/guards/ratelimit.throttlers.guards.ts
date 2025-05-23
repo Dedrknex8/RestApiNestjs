@@ -8,13 +8,14 @@ export class LoginThrottlerClass extends ThrottlerGuard{
         const email = req.body?.email || 'anonymous'
 
         if(!email){
-            throw new ForbiddenException('Email is requried')
-
+            throw new ForbiddenException('Email is requried');
         }
         return `loginemail:${email}`
     } 
     // custom limit
     protected getLimit() : Promise<number>{
+        console.log('This custom ttl is working')
+        
         return Promise.resolve(1)
     }
 

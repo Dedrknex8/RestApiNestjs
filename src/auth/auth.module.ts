@@ -7,6 +7,7 @@ import {JwtModule, JwtService} from '@nestjs/jwt'
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RolesGuards } from './guards/role.guard';
 import { JwtStratergy } from './startergies/jwt.startergy';
+import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -21,7 +22,7 @@ import { JwtStratergy } from './startergies/jwt.startergy';
     ConfigModule
   ],
   controllers: [AuthController],
-  providers: [AuthService,JwtStratergy,RolesGuards],
+  providers: [AuthService,JwtStratergy,RolesGuards,LoginThrottlerClass],
   exports : [AuthService,RolesGuards]
 })
 export class AuthModule {}

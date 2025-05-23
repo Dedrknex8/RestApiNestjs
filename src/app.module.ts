@@ -14,12 +14,12 @@ import { ThrottlerModule } from '@nestjs/throttler';
     ConfigModule.forRoot({
     isGlobal : true
   }),
-  ThrottlerModule.forRoot({
-    throttlers : [{
-      ttl : 6000, //in milliSecond
-      limit : 10, // 10 means 10 limit per user
-    }]
-  }),
+  ThrottlerModule.forRoot([
+    {
+       ttl : 6000, //in milliSecond
+       limit : 1, // 10 means 10 limit per user
+    }
+  ]),
     TypeOrmModule.forRoot({
       type : 'postgres',
       host : 'localhost',
