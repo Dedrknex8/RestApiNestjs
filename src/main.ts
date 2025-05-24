@@ -1,7 +1,8 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-
+import * as cookieParser from 'cookie-parser'
+import * as csurf from 'csurf'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
@@ -12,6 +13,18 @@ async function bootstrap() {
       forbidNonWhitelisted:true,
       transform:true, //automatically transformed payload into object type a/q to dto
       disableErrorMessages:false
+    })
+  );
+
+  app.use(cookieParser());
+
+  app.use(
+    csurf({
+      cookie : {
+        httpOnly : true,
+        sameSite : 'stirct',
+        secure : false,
+      }
     })
   )
 
