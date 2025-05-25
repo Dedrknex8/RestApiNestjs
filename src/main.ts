@@ -18,15 +18,6 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
-  app.use(
-    csurf({
-      cookie : {
-        httpOnly : true,
-        sameSite : 'stirct',
-        secure : false,
-      }
-    })
-  )
 
   await app.listen(process.env.PORT ?? 3000);
 }

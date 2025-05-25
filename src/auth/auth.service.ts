@@ -1,7 +1,7 @@
 import { BadRequestException, ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Role, User } from './entity/user.entities';
-import { Repository } from 'typeorm';
+import { NoNeedToReleaseEntityManagerError, Repository } from 'typeorm';
 import { RegisterDto } from './dto/register.user.dto';
 import * as bcrypt from 'bcrypt'
 import { LoginDto } from './dto/login.user.dto';
@@ -9,6 +9,7 @@ import { NotFoundError } from 'rxjs';
 import { JwtService } from '@nestjs/jwt';
 import { resourceLimits } from 'worker_threads';
 import { ConfigService } from '@nestjs/config';
+import { Response } from 'express';
 @Injectable()
 export class AuthService {
     constructor(
@@ -81,7 +82,7 @@ export class AuthService {
         }
     }
 
-    async loginUser(loginDto : LoginDto){
+    async loginUser(loginDto : LoginDto,res:Response){
 
         //check if user with this data is exists or not
         const user = await this.userRepo.findOne({
@@ -96,12 +97,24 @@ export class AuthService {
         //if user exists then match password
         const tokens =  await this.generateToken(user);
 
+        //WHEN TOKEN ARE GENREATED LET'S USED AS  COOKIE FOR HTTP ONLY METHOD
+        res.cookie('auth_token',tokens.accessToken,{
+            httpOnly:true,
+            secure: true,
+            sameSite : 'none',
+            maxAge : 24 * 60 * 60 * 1000,
+            domain: 'localhosts',
+            path : '/'
+        })
+        
+
         const {password, ...result} = user;
 
-        return {
+        return res.json({
             user : result,
-            ...tokens
-        }
+            ...tokens,
+            message : 'Login Sucessfull'
+        })
     }
 
     async refreshToken(refreshToken : string){

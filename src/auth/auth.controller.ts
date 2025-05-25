@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Put, UnauthorizedException, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, UnauthorizedException, UseGuards ,Res} from '@nestjs/common';
 import { RegisterDto } from './dto/register.user.dto';
 import { Role, User as UserEntity } from './entity/user.entities';
 import { AuthService } from './auth.service';
@@ -9,12 +9,18 @@ import { getCurrentUser } from './Decorators/user.decorator';
 import { Roles } from './Decorators/roles.decorators';
 import { RolesGuards } from './guards/role.guard';
 import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
+import { Request, Response } from 'express';
 // import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('auth')
 export class AuthController {
     constructor(private readonly authservice: AuthService){}
 
+// @Get('csrf-token')
+// getCsrfToken(@Req() req:Request,@Res() res:Response){
+//     const token = req.csrfToken();
+//     res.json({csrfToken : token});
+// }
 
 @Post('register')
 async RegisterUser(@Body() RegisterDto : RegisterDto){
@@ -24,8 +30,8 @@ async RegisterUser(@Body() RegisterDto : RegisterDto){
 
 @Post('login')
 @UseGuards(LoginThrottlerClass)
-async loginUser(@Body() LoginDto:LoginDto){
-    return this.authservice.loginUser(LoginDto)
+async loginUser(@Body() LoginDto:LoginDto,@Res() res:Response){
+    return this.authservice.loginUser(LoginDto,res)
 }
 
 @Post('refresh-token')
@@ -39,8 +45,8 @@ async loginUser(@Body() LoginDto:LoginDto){
 
 @UseGuards(JwtAuthGuard)
 @Get('profile')
-getprofile(@getCurrentUser() user:any) {
-    return user;
+getprofile(@Req() req:Request) {
+    return {message : 'This is a protected route',user: req.user};
 }
 
 @Post('create-admin')
