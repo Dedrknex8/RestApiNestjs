@@ -22,27 +22,36 @@ export class AuthController {
 //     res.json({csrfToken : token});
 // }
 
-@Post('register')
-async RegisterUser(@Body() RegisterDto : RegisterDto){
-    return this.authservice.registerUser(RegisterDto)
-}
 
 
+
+  
 @Post('login')
 @UseGuards(LoginThrottlerClass)
-async loginUser(@Body() LoginDto:LoginDto,@Res() res:Response){
-    return this.authservice.loginUser(LoginDto,res)
+async loginUser(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Response) {
+  return this.authservice.loginUser(loginDto,res)
 }
+  
+
+
+// @Post('refresh-token')
+//     async refreshAccessToken(@Body('refreshToken') refreshToken : string ){
+//         const token = this.authservice.refreshToken(refreshToken)
+//         if(!token){
+//             throw new UnauthorizedException("TOken cannot be validated")
+//         }
+//         return token;
+//     }
+
 
 @Post('refresh-token')
-    async refreshAccessToken(@Body('refreshToken') refreshToken : string ){
-        const token = this.authservice.refreshToken(refreshToken)
-        if(!token){
-            throw new UnauthorizedException("TOken cannot be validated")
-        }
-        return token;
+async refreshAccessToken(@Req() req: Request) {
+    const refreshToken = req.cookies?.refresh_token;
+    if (!refreshToken) {
+        throw new UnauthorizedException('Refresh token not found');
     }
-
+    return this.authservice.refreshToken(refreshToken);
+}
 @UseGuards(JwtAuthGuard)
 @Get('profile')
 getprofile(@Req() req:Request) {

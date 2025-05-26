@@ -2,10 +2,10 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import * as cookieParser from 'cookie-parser'
-import * as csurf from 'csurf'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
+  app.use(cookieParser());
   //this will automatically validate incoming req but can be used in controller using @Usepipe()
   app.useGlobalPipes(
     new ValidationPipe({
@@ -16,7 +16,12 @@ async function bootstrap() {
     })
   );
 
-  app.use(cookieParser());
+  app.enableCors({
+    origin : true,
+    credentials : true
+  });
+
+  
 
 
   await app.listen(process.env.PORT ?? 3000);

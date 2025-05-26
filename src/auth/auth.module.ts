@@ -15,7 +15,7 @@ import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
       imports : [ConfigModule],
       useFactory : async(configService: ConfigService)=>({
         secret : configService.getOrThrow('JWT_SECRET'),
-        signOptions: {expiresIn: '5m'}
+        signOptions: {expiresIn: '15m'}
       }),
        inject: [ConfigService]
     }),

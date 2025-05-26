@@ -82,12 +82,12 @@ export class AuthService {
         }
     }
 
-    async loginUser(loginDto : LoginDto,res:Response){
+    async loginUser(loginDto : LoginDto,res:Response) : Promise<{ user: any; accessToken: string; refreshToken: string }>{
 
         //check if user with this data is exists or not
         const user = await this.userRepo.findOne({
             where : {email : loginDto.email},
-            select : ['password']
+             select: ['id', 'email', 'username', 'password', 'role'],
         });
 
         if(!user || !(await this.verifypassword(loginDto.password,user.password))){
@@ -96,35 +96,37 @@ export class AuthService {
 
         //if user exists then match password
         const tokens =  await this.generateToken(user);
-
-        //WHEN TOKEN ARE GENREATED LET'S USED AS  COOKIE FOR HTTP ONLY METHOD
-        res.cookie('auth_token',tokens.accessToken,{
-            httpOnly:true,
-            secure: true,
-            sameSite : 'none',
-            maxAge : 24 * 60 * 60 * 1000,
-            domain: 'localhosts',
-            path : '/'
+        res.cookie('access_token', tokens.accessToken, {
+        httpOnly: true,
+        secure: false, // Set to true in production
+        sameSite: 'lax',
+        maxAge: 15 * 60 * 1000, // 15 minutes
         })
-        
+
+        res.cookie('refresh_token', tokens.refreshToken, {
+            httpOnly: true,
+            secure: false, // Set to true in production
+            sameSite: 'lax',
+            maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+        });
 
         const {password, ...result} = user;
 
-        return res.json({
+        return {
             user : result,
-            ...tokens,
-            message : 'Login Sucessfull'
-        })
+            accessToken: tokens.accessToken,
+            refreshToken: tokens.refreshToken,
+        }
     }
 
     async refreshToken(refreshToken : string){
         try {
-            const paylaod = this.jwtService.verify(refreshToken, {
+            const payload = this.jwtService.verify(refreshToken, {
                 secret : 'JwtRefreshSecret'
             })
 
             const user = await this.userRepo.findOne({
-                where : {id : paylaod.id}
+                where : {id : payload.id}
             })
 
             if(!user){
