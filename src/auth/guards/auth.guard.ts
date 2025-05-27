@@ -4,7 +4,7 @@ import { Request } from 'express';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-  // Override token extraction logic
+  
   getRequest(context: ExecutionContext) {
     const ctx = context.switchToHttp();
     const request = ctx.getRequest<Request>();
@@ -18,7 +18,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
       }
     }
 
-    // 2. Fall back to existing authorization header
+    // 2. Fall back to existing authorization header 
     return request;
   }
 
