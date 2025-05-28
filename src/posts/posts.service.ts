@@ -24,7 +24,7 @@ export class PostsService {
     //     }
     // ];
     
-    private postListCacheKeys : Set<string> =  new Set(); //THIS WILL KEEP TRACK OF CHACHE KEYS
+    private postListCacheKeys : Set<string> =  new Set(); //THIS WILL KEEP TRACK OF CACHED KEYS
     constructor(
         @InjectRepository(Post)
         private postRespository : Repository<Post>,
@@ -38,11 +38,13 @@ export class PostsService {
     async findAll(query : FindPageQueryDTO) : Promise<PaginationReponse<Post>>{
         // return this.postRespository.find({
         //     relations : ['authorname']
-        
-      const cacheKey = await this.generatePostListCacheKey(query)  
     
-      this.postListCacheKeys.add(cacheKey)
-
+    //THIS WILL GENERATE CACHE FOR GIVEN QUERY
+      const cacheKey = await this.generatePostListCacheKey(query);  
+    
+      //THIS WILL ADD CACHE KEYS
+      this.postListCacheKeys.add(cacheKey);
+      //GET THE CACHE DATA
       const getCachedata = await this.cacheManager.get<PaginationReponse<Post>>(cacheKey)
 
       if(getCachedata){
@@ -60,7 +62,7 @@ export class PostsService {
       const queryBuilder = this.postRespository.createQueryBuilder('post').leftJoinAndSelect('post.authorname','authorname').orderBy('post.createdAt','DESC').skip(skip).take(limit);
 
       if(title){
-        queryBuilder.andWhere('post.title ILIKE : title', {title : `${title}%` })
+        queryBuilder.andWhere('post.title ILIKE :title', {title : `${title}%` })
       }
 
       const [items,totalItems] = await queryBuilder.getManyAndCount();
@@ -85,14 +87,28 @@ export class PostsService {
 
     }
     async findSinglePost(id:number) : Promise<Post>{
-        const singlePost = await  this.postRespository.findOne({
-            where : {id},
-            relations : ['authorname'] //added realtion b\w psot and author
-        })
-        if(!singlePost){
-            throw new NotFoundException(`Post with this ${id} is not found`);
+        const cacheKey = `post_${id}`;
+
+        const cachePost = await this.cacheManager.get<Post>(cacheKey);
+
+        if(cacheKey){
+            console.log(`Cache hit for post id ${id}`);
+        }else{
+            console.log(`Cache missed for post id ${id}`);
         }
-        return singlePost;
+
+        const post = await this.postRespository.findOne({
+            where : {id},
+            relations : ['authorname']
+        })
+
+        if(!post){
+            throw new NotFoundException(`post with id ${id} cannot be found`);
+        }
+
+        await this.cacheManager.set(cacheKey,post,3000);
+
+        return post;
     };
 
     async createPost(createPostData : CreatePostDto, authorname : User) : Promise<Post>{
