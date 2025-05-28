@@ -8,6 +8,7 @@ import {ConfigModule,ConfigService} from '@nestjs/config'
 import { AuthModule } from './auth/auth.module';
 import { User } from './auth/entity/user.entities';
 import { ThrottlerModule } from '@nestjs/throttler';
+import { CacheModule } from '@nestjs/cache-manager';
 
 @Module({
   imports: [
@@ -20,6 +21,11 @@ import { ThrottlerModule } from '@nestjs/throttler';
        limit : 1, // 10 means 10 limit per user
     }
   ]),
+    CacheModule.register({
+      isGlobal : true,
+      ttl : 3000,
+      max : 100
+    }),
     TypeOrmModule.forRoot({
       type : 'postgres',
       host : 'localhost',

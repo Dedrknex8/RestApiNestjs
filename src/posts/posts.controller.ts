@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpCode, HttpStatus, Param, ParseIntPipe, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { PostsService } from './posts.service';
 import {Post as PostInterface}  from  '../interface/post.interface'
 import { CreatePostDto } from './dto/createPost.dto';
@@ -9,12 +9,14 @@ import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { Role, User } from 'src/auth/entity/user.entities';
 import { Roles } from 'src/auth/Decorators/roles.decorators';
 import { RolesGuards } from 'src/auth/guards/role.guard';
+import { FindPageQueryDTO } from 'src/common/dto/findpageQurery.dto';
+import { PaginationReponse } from 'src/common/interfaces/pagination-response.interface';
 @Controller('posts')
 export class PostsController {
     constructor(private readonly postService : PostsService ){}
         @Get()
-        async findAll() : Promise<PostEntity[]>{
-            return this.postService.findAll()
+        async findAll( @Query() query: FindPageQueryDTO) : Promise<PaginationReponse<PostEntity>>{
+            return this.postService.findAll(query)
         }
         @Get(':id')
         async findOne(@Param('id', ParseIntPipe)id : number): Promise<PostEntity>{
