@@ -88,27 +88,28 @@ export class PostsService {
     }
     async findSinglePost(id:number) : Promise<Post>{
         const cacheKey = `post_${id}`;
-
+        
+        //GETTING THE CACHE POST FROM CACHEMANAGER
         const cachePost = await this.cacheManager.get<Post>(cacheKey);
 
-        if(cacheKey){
-            console.log(`Cache hit for post id ${id}`);
+        if(cachePost){
+            console.log(`Cache hit for post id ---> ${id}`);
         }else{
-            console.log(`Cache missed for post id ${id}`);
+            console.log(`Cache missed for post id ---> ${id} returning form DB`);
         }
 
-        const post = await this.postRespository.findOne({
+        const singlePost = await this.postRespository.findOne({
             where : {id},
             relations : ['authorname']
         })
 
-        if(!post){
+        if(!singlePost){
             throw new NotFoundException(`post with id ${id} cannot be found`);
         }
 
-        await this.cacheManager.set(cacheKey,post,3000);
+        await this.cacheManager.set(cacheKey,singlePost,3000);
 
-        return post;
+        return singlePost;
     };
 
     async createPost(createPostData : CreatePostDto, authorname : User) : Promise<Post>{
@@ -150,7 +151,20 @@ export class PostsService {
         const itemToBeDeleted  = await this.findSinglePost(id)
 
         await this.postRespository.remove(itemToBeDeleted);
+
+        await this.cacheManager.del(`post_${id}`);
+
+        await this.invalidCacheKeys();
         
         return {message : `Post deleted with ${id} successfully`}
+    }
+
+    private async invalidCacheKeys() : Promise<void>{
+        console.log(`Invalidating ${this.postListCacheKeys.size} list cache enteries`);
+
+        for(const key of this.postListCacheKeys){
+            await this.cacheManager.del(key)
+        }
+        this.postListCacheKeys.clear()
     }
 }
