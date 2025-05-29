@@ -118,6 +118,9 @@ export class PostsService {
             content : createPostData.content,
             authorname, //make raltion to user enitty
         })
+        
+        //INVALID CACHE AFTER CREATING NEW POST
+        await this.invalidCacheKeys();
         return this.postRespository.save(newPost);
 
 
@@ -141,9 +144,16 @@ export class PostsService {
             throw new ForbiddenException('Invalid Permission');
         }
 
+        //INVALID THE CACHE AFTER UPDATING THE USER
         Object.assign(currentPost,updatePostData)
 
-        return this.postRespository.save(currentPost);
+        const updatedPost = await  this.postRespository.save(currentPost);
+
+        await this.cacheManager.del(`posts_${id}`);
+
+        await this.invalidCacheKeys();
+
+        return updatedPost;
         
     }
 
