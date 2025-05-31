@@ -10,6 +10,7 @@ import { User } from './auth/entity/user.entities';
 import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { FileuploadModule } from './fileupload/fileupload.module';
+import { File } from './fileupload/cloudinary/entities/file.enitity';
 
 @Module({
   imports: [
@@ -35,7 +36,7 @@ import { FileuploadModule } from './fileupload/fileupload.module';
       password : 'root',
       database : 'NestJsTest',
       //entity means model
-      entities : [Post,User], //make sure to import/delcare all entities here
+      entities : [Post,User,File], //make sure to import/delcare all entities here
       synchronize : true // disable in production mode it creates data everytime app launches
 
     }),
