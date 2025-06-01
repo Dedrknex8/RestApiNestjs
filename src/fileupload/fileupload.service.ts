@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { File } from './cloudinary/entities/file.enitity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -12,7 +12,6 @@ export class FileuploadService {
         private readonly fileRepo: Repository<File>,
         private readonly CloudinaryService : CloudinaryService
     ){}
-
 
 
     async uploadFile(file : Express.Multer.File, description : string | undefined, user:User) : Promise<File>{
@@ -35,6 +34,24 @@ export class FileuploadService {
         return this.fileRepo.find({
             relations : ['uploader'],
             order : {createdAt: 'DESC'}
-        })
+        });
     }
+
+    async removeFile(id : string) : Promise<void>{
+        const itemToBeDeleted = await this.fileRepo.findOne({
+            where : {id}
+        });
+
+        if(!itemToBeDeleted){
+            throw new NotFoundException('FIle with this id cannot be found  ');
+        }
+
+        //first destoy from cloudinary service
+
+        await this.CloudinaryService.deleteFile(itemToBeDeleted.publicId);
+
+        await this.fileRepo.remove(itemToBeDeleted);
+    }
+
+    
 } 
