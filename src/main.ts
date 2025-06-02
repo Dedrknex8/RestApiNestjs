@@ -14,7 +14,7 @@ async function bootstrap() {
       transform:true, //automatically transformed payload into object type a/q to dto
       disableErrorMessages:false
     })
-  );
+);
 
   app.enableCors({
     origin : true,

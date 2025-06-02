@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Param, ParseIntPipe, Post, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileuploadService } from './fileupload.service';
 import { JwtAuthGuard } from 'src/auth/guards/auth.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -23,5 +23,17 @@ export class FileuploadController {
         }
 
         return this.fileUploadService.uploadFile(file,fileUploadDto.description,user);
+    }
+
+    @Delete(':id')
+    @UseGuards(JwtAuthGuard)
+    async deleteFile(
+        @Param('id') id:string,
+        @getCurrentUser() user : User
+    ) : Promise<{message : string}>{
+         const fileToBeDeleted = await this.fileUploadService.removeFile(id);
+
+          return {message : 'File deleted successfully'}
+        
     }
 }

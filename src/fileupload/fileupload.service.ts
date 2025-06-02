@@ -43,7 +43,7 @@ export class FileuploadService {
         });
 
         if(!itemToBeDeleted){
-            throw new NotFoundException('FIle with this id cannot be found  ');
+            throw new NotFoundException('File with this id cannot be found  ');
         }
 
         //first destoy from cloudinary service
@@ -51,6 +51,10 @@ export class FileuploadService {
         await this.CloudinaryService.deleteFile(itemToBeDeleted.publicId);
 
         await this.fileRepo.remove(itemToBeDeleted);
+        
+       
+
+        
     }
 
     
