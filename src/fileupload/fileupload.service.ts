@@ -1,16 +1,18 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { File } from './cloudinary/entities/file.enitity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entities';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class FileuploadService {
     constructor(
         @InjectRepository(File) // Enject the enity here
         private readonly fileRepo: Repository<File>,
-        private readonly CloudinaryService : CloudinaryService
+        private readonly CloudinaryService : CloudinaryService,
+        @Inject(CACHE_MANAGER) private cacheManager : Cache,
     ){}
 
 
@@ -36,6 +38,21 @@ export class FileuploadService {
             order : {createdAt: 'DESC'}
         });
     }
+
+    async findById(id:string) :  Promise<File>{
+        const findFileById = await this.fileRepo.findOne({
+            where : {id},
+            relations : ['authorname']
+        })
+
+        if(!findFileById){
+            throw new NotFoundException("Either the file is missing or the id is not valid");
+        }
+
+        return findFileById;
+
+    }
+    
 
     async removeFile(id : string) : Promise<void>{
         const itemToBeDeleted = await this.fileRepo.findOne({
