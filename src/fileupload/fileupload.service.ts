@@ -4,7 +4,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entities';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 @Injectable()
 export class FileuploadService {
@@ -12,7 +11,6 @@ export class FileuploadService {
         @InjectRepository(File) // Enject the enity here
         private readonly fileRepo: Repository<File>,
         private readonly CloudinaryService : CloudinaryService,
-        @Inject(CACHE_MANAGER) private cacheManager : Cache,
     ){}
 
 
