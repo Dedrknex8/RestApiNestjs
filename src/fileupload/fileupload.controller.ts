@@ -27,9 +27,8 @@ export class FileuploadController {
 
     @Get()
     @UseGuards(JwtAuthGuard)
-
-    async findAll(): Promise<any>{
-        return this.fileUploadService.findAll()
+    async findAll(@getCurrentUser() user : User): Promise<any>{
+        return this.fileUploadService.findAll(user);
     }
     
     @Get(':id')

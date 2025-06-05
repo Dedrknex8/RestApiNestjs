@@ -30,17 +30,27 @@ export class FileuploadService {
         return this.fileRepo.save(newnlyCreatedFile);
     }
 
-    async findAll() : Promise<File[]>{
-        return this.fileRepo.find({
+    async findAll(user:User) : Promise<File[]>{
+        if(user.role === 'admin'){
+         return this.fileRepo.find({
             relations : ['uploader'],
             order : {createdAt: 'DESC'}
         });
     }
 
+    //FOR NORMAL USER   
+     return this.fileRepo.find({
+            relations : ['uploader'],
+            order : {createdAt: 'DESC'}
+        });
+        
+    
+    }
+
     async findById(id:string,user:User) :  Promise<File>{
         const findFileById = await this.fileRepo.findOne({
             where : {id},
-            relations : ['uploader']
+            relations : ['uploader'],
         })
 
         if(!findFileById){
