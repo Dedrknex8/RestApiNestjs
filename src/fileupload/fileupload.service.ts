@@ -4,7 +4,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entities';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
-
+import { Role } from 'src/auth/entity/user.entities';
 @Injectable()
 export class FileuploadService {
     constructor(
@@ -31,7 +31,7 @@ export class FileuploadService {
     }
 
     async findAll(user:User) : Promise<File[]>{
-        if(user.role === 'admin'){
+        if(user.role === Role.Admin){
          return this.fileRepo.find({
             relations : ['uploader'],
             order : {createdAt: 'DESC'}
@@ -51,6 +51,7 @@ export class FileuploadService {
         const findFileById = await this.fileRepo.findOne({
             where : {id},
             relations : ['uploader'],
+            
         })
 
         if(!findFileById){
@@ -58,9 +59,9 @@ export class FileuploadService {
         }
 
         const isOwner = findFileById.uploader.id === user.id;
-        const isAdmin = user.role === 'admin'
+        const isAdmin = user.role === Role.Admin
 
-        if(!isOwner || !isAdmin){
+        if(!isOwner && !isAdmin){
             throw new UnauthorizedException("You're not authorized to access this file" )
         }
 
