@@ -43,7 +43,7 @@ export class FileuploadController {
         @Param('id') id:string,
         @getCurrentUser() user : User
     ) : Promise<{message : string}>{
-         const fileToBeDeleted = await this.fileUploadService.removeFile(id);
+         const fileToBeDeleted = await this.fileUploadService.removeFile(id,user);
 
           return {message : 'File deleted successfully'}
         
