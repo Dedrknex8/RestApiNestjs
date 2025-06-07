@@ -8,6 +8,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RolesGuards } from './guards/role.guard';
 import { JwtStratergy } from './startergies/jwt.startergy';
 import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
+import { EventsModule } from 'src/events/events.module';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -19,7 +20,8 @@ import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
       }),
        inject: [ConfigService]
     }),
-    ConfigModule
+    ConfigModule,
+    EventsModule,
   ],
   controllers: [AuthController],
   providers: [AuthService,JwtStratergy,RolesGuards,LoginThrottlerClass],

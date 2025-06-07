@@ -44,7 +44,8 @@ import { EventsModule } from './events/events.module';
     PostsModule,
     AuthModule,
     FileuploadModule,
-    EventsModule],
+    EventsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })

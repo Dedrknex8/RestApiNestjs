@@ -64,5 +64,9 @@ getprofile(@Req() req:Request) {
     createAdmin(@Body() registerDto:RegisterDto){
         return this.authservice.createAdminUser(registerDto)
     }
+@Post('register')
+    registerUser(@Body() registerDto : RegisterDto){
+        return this.authservice.registerUser(registerDto)
+    }
 }
 

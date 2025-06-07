@@ -7,7 +7,7 @@ import { emitUserRegisterEvent } from "../user-event.service";
 export class UserRegisteredListner{
     private readonly logger = new Logger(UserRegisteredListner.name);
 
-    @OnEvent('User.registered')
+    @OnEvent('user.registered')
     handleUserRegisteredEvent(event : emitUserRegisterEvent) : void{
         const {user , timeStamp} = event
 

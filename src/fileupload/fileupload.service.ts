@@ -70,9 +70,10 @@ export class FileuploadService {
     }
     
 
-    async removeFile(id : string) : Promise<void>{
+    async removeFile(id : string,user:User) : Promise<void>{
         const itemToBeDeleted = await this.fileRepo.findOne({
-            where : {id}
+            where : {id},
+            relations : ['uploader']
         });
 
         if(!itemToBeDeleted){
@@ -80,7 +81,12 @@ export class FileuploadService {
         }
 
         //first destoy from cloudinary service
-
+        const isOwner = itemToBeDeleted.uploader.id === user.id;
+        const isAdmin = user.role === Role.Admin;
+        if(!isOwner && !isAdmin){
+            throw new UnauthorizedException("User cannot be verified ...")
+        }
+        
         await this.CloudinaryService.deleteFile(itemToBeDeleted.publicId);
 
         await this.fileRepo.remove(itemToBeDeleted);

@@ -10,13 +10,15 @@ import { JwtService } from '@nestjs/jwt';
 import { resourceLimits } from 'worker_threads';
 import { ConfigService } from '@nestjs/config';
 import { Response } from 'express';
+import { UserEventService } from 'src/events/user-event.service';
 @Injectable()
 export class AuthService {
     constructor(
         @InjectRepository(User)
         private userRepo : Repository<User>,
         private jwtService : JwtService,
-        private ConfigService : ConfigService
+        private ConfigService : ConfigService,
+        private readonly userEventService : UserEventService
     ){}
 
     async registerUser(RegisterDto : RegisterDto){
@@ -41,7 +43,8 @@ export class AuthService {
         })
 
         const savedUser = await this.userRepo.save(createNewUser);
-
+        //EMIT THE EMITTER HERE
+        this.userEventService.emitUserRegistered(createNewUser)
         const {password, ...result} = savedUser;
 
         return {
