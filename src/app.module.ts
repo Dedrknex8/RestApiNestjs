@@ -11,6 +11,7 @@ import { ThrottlerModule } from '@nestjs/throttler';
 import { CacheModule } from '@nestjs/cache-manager';
 import { FileuploadModule } from './fileupload/fileupload.module';
 import { File } from './fileupload/cloudinary/entities/file.enitity';
+import { EventsModule } from './events/events.module';
 
 @Module({
   imports: [
@@ -42,7 +43,8 @@ import { File } from './fileupload/cloudinary/entities/file.enitity';
     }),
     PostsModule,
     AuthModule,
-    FileuploadModule],
+    FileuploadModule,
+    EventsModule],
   controllers: [AppController],
   providers: [AppService],
 })
