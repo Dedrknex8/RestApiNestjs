@@ -21,6 +21,12 @@ export interface emitUserLoginEvent{
     timeStamp : Date
 }
 
+// export interface emitUserFileUpload{
+//     file : {
+//         uuid : string,
+//         uploader : string
+//     }
+// }
 @Injectable()
 export class UserEventService{
     constructor(
