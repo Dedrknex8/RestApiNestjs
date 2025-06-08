@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserEventService } from './user-event.service';
 import { UserRegisteredListner } from './listeners/user-registered.listener';
+import { UserLoginListner } from './listeners/user-loggedIn.listner';
 
 @Module({
     imports : [
@@ -14,7 +15,8 @@ import { UserRegisteredListner } from './listeners/user-registered.listener';
     ],
     providers : [
         UserEventService,
-        UserRegisteredListner
+        UserRegisteredListner,
+        UserLoginListner
     ],
     exports : [UserEventService]
 })

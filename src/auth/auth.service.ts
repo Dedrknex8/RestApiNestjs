@@ -114,6 +114,8 @@ export class AuthService {
         });
 
         const {password, ...result} = user;
+        
+        this.userEventService.emitUserLogin(user);
 
         return {
             user : result,
