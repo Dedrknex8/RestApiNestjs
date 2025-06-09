@@ -14,7 +14,7 @@ export class UploadedFileListner {
 
         const {originalName,url,mimeType} = file
 
-        this.logger.log(`File ${originalName} uplaoded successfully of type ${mimeType} at ${timestamp} url  : ${url}  `)
+        this.logger.log(`File ${originalName} uplaoded successfully of type ${mimeType} at ${timestamp.toISOString()} url  : ${url}  `)
     }
 
 }
