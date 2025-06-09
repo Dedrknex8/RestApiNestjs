@@ -3,6 +3,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserEventService } from './user-event.service';
 import { UserRegisteredListner } from './listeners/user-registered.listener';
 import { UserLoginListner } from './listeners/user-loggedIn.listner';
+import { UploadedFileListner } from './listeners/fileuploaded.listner';
 
 @Module({
     imports : [
@@ -16,7 +17,8 @@ import { UserLoginListner } from './listeners/user-loggedIn.listner';
     providers : [
         UserEventService,
         UserRegisteredListner,
-        UserLoginListner
+        UserLoginListner,
+        UploadedFileListner
     ],
     exports : [UserEventService]
 })

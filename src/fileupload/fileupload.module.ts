@@ -6,6 +6,7 @@ import { File } from './cloudinary/entities/file.enitity';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 import { MulterModule } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
+import { EventsModule } from 'src/events/events.module';
 
 @Module({
   imports : [
@@ -14,8 +15,9 @@ import { memoryStorage } from 'multer';
     MulterModule.register({
       storage : memoryStorage()
     }),
+    EventsModule
   ],
   controllers: [FileuploadController],
-  providers: [FileuploadService]
+  providers: [FileuploadService,]
 })
 export class FileuploadModule {}

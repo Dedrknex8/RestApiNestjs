@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { EventEmitter2 } from "@nestjs/event-emitter";
-import { stringify } from "querystring";
 import { User } from "src/auth/entity/user.entities";
+import { File } from "src/fileupload/cloudinary/entities/file.enitity";
 
 export interface emitUserRegisterEvent{
     user:{
@@ -20,13 +20,17 @@ export interface emitUserLoginEvent{
     },
     timeStamp : Date
 }
+export interface emitFileUploadEvent{
+    file : {
+        id : string,
+        originalName : string,
+        mimeType : string,
+        url : string,
+    },
+    timestamp :  Date
+}
 
-// export interface emitUserFileUpload{
-//     file : {
-//         uuid : string,
-//         uploader : string
-//     }
-// }
+
 @Injectable()
 export class UserEventService{
     constructor(
@@ -44,6 +48,21 @@ export class UserEventService{
             timeStamp : new Date()
         }
         this.eventEmitter.emit('user.login', userLogedIn);
+    }
+
+    //EMIT EVENT FOR FILE UPLAOD
+    emitUSerFileUpload(file:File):void{
+        const uploadedFile : emitFileUploadEvent = {
+            file : {
+                id : file.id,
+                originalName: file.originalName,
+                mimeType : file.mimeType,
+                url : file.url,
+            },
+            timestamp : new Date()
+
+        }
+        this.eventEmitter.emit('file.uploaded',uploadedFile);
     }
 
     //emit an user register event\

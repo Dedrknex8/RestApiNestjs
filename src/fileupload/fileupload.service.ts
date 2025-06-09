@@ -5,12 +5,15 @@ import { Repository } from 'typeorm';
 import { User } from 'src/auth/entity/user.entities';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
 import { Role } from 'src/auth/entity/user.entities';
+import { EventEmitter2 } from '@nestjs/event-emitter';
+import { UserEventService } from 'src/events/user-event.service';
 @Injectable()
 export class FileuploadService {
     constructor(
         @InjectRepository(File) // Enject the enity here
         private readonly fileRepo: Repository<File>,
         private readonly CloudinaryService : CloudinaryService,
+        private readonly userEventService : UserEventService
     ){}
 
 
@@ -27,6 +30,7 @@ export class FileuploadService {
             uploader : user
         });
 
+        this.userEventService.emitUSerFileUpload(newnlyCreatedFile);
         return this.fileRepo.save(newnlyCreatedFile);
     }
 
@@ -86,7 +90,7 @@ export class FileuploadService {
         if(!isOwner && !isAdmin){
             throw new UnauthorizedException("User cannot be verified ...")
         }
-        
+
         await this.CloudinaryService.deleteFile(itemToBeDeleted.publicId);
 
         await this.fileRepo.remove(itemToBeDeleted);
