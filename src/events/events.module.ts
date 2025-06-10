@@ -4,6 +4,7 @@ import { UserEventService } from './user-event.service';
 import { UserRegisteredListner } from './listeners/user-registered.listener';
 import { UserLoginListner } from './listeners/user-loggedIn.listner';
 import { UploadedFileListner } from './listeners/fileuploaded.listner';
+import { FileEventService } from './file-event.service';
 
 @Module({
     imports : [
@@ -18,8 +19,9 @@ import { UploadedFileListner } from './listeners/fileuploaded.listner';
         UserEventService,
         UserRegisteredListner,
         UserLoginListner,
+        FileEventService,
         UploadedFileListner
     ],
-    exports : [UserEventService]
+    exports : [UserEventService,FileEventService]
 })
 export class EventsModule {}

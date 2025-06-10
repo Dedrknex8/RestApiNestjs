@@ -1,6 +1,6 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-import { emitFileUploadEvent } from "../user-event.service";
+import { emitFileUploadEvent } from "../file-event.service";
 
 
 @Injectable()
