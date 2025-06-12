@@ -20,15 +20,7 @@ export interface emitUserLoginEvent{
     },
     timeStamp : Date
 }
-export interface emitFileUploadEvent{
-    file : {
-        id : string,
-        originalName : string,
-        mimeType : string,
-        url : string,
-    },
-    timestamp :  Date
-}
+
 
 
 @Injectable()
@@ -50,20 +42,7 @@ export class UserEventService{
         this.eventEmitter.emit('user.login', userLogedIn);
     }
 
-    //EMIT EVENT FOR FILE UPLAOD
-    emitUSerFileUpload(file:File):void{
-        const uploadedFile : emitFileUploadEvent = {
-            file : {
-                id : file.id,
-                originalName: file.originalName,
-                mimeType : file.mimeType,
-                url : file.url,
-            },
-            timestamp : new Date()
-
-        }
-        this.eventEmitter.emit('file.uploaded',uploadedFile);
-    }
+    
 
     //emit an user register event\
     emitUserRegistered(user :User): void{
