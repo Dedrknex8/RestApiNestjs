@@ -28,7 +28,7 @@ export class LoggingInterceptor implements NestInterceptor{
                     const endTime = Date.now();
                     const duration  = endTime - startTime
                     
-                    this.logger.log(`${method} ${url } ${duration}ms`)
+                    this.logger.log(`[INCOMING]${method} ${url } ${duration}ms`)
                 },
                 error : (error)=>{
                     const endTime = Date.now();

@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PostsModule } from './posts/posts.module';
@@ -12,6 +12,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import { FileuploadModule } from './fileupload/fileupload.module';
 import { File } from './fileupload/cloudinary/entities/file.enitity';
 import { EventsModule } from './events/events.module';
+import { LoginMidleware } from './middleware/logger.middleware';
 
 @Module({
   imports: [
@@ -49,4 +50,8 @@ import { EventsModule } from './events/events.module';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule {
+  configure(consumer : MiddlewareConsumer){
+    consumer.apply(LoginMidleware).forRoutes('*')
+  }
+}
