@@ -26,6 +26,6 @@ export class LoginMidleware implements NestMiddleware{
                 this.logger.log(`[Response] -> ${method} -  ${duration} ${ip}  - ${statusCode}`)
             }
         })
-        next()
+        next(); //THIS IS COMMAND TO MAKE SURE THE NEXT COMMAND IS AVALABLE FOR IT PASS TO NEXT
     }
 }
