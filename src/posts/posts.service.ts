@@ -12,6 +12,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { FindPageQueryDTO } from 'src/common/dto/findpageQurery.dto';
 import { PaginationReponse } from 'src/common/interfaces/pagination-response.interface';
 import { Cache } from 'cache-manager';
+import { PostEventService } from 'src/events/post-event.service';
 @Injectable()
 export class PostsService {
     // private posts : Post[]= [
@@ -29,6 +30,7 @@ export class PostsService {
         @InjectRepository(Post)
         private postRespository : Repository<Post>,
         @Inject(CACHE_MANAGER) private cacheManager : Cache,
+        private readonly postEventService:PostEventService
     ){}
 
     private generatePostListCacheKey(query  :FindPageQueryDTO) : string {
@@ -121,6 +123,7 @@ export class PostsService {
         
         //INVALID CACHE AFTER CREATING NEW POST
         await this.invalidCacheKeys();
+        this.postEventService.emitUSerPost(newPost);
         return this.postRespository.save(newPost);
 
 

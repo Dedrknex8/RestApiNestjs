@@ -1,6 +1,5 @@
 import { Injectable, Logger } from "@nestjs/common";
 import { OnEvent } from "@nestjs/event-emitter";
-import {  emitUserLoginEvent } from "../user-event.service";
 import { emitPostInterface } from "../post-event.service";
 
 
