@@ -58,7 +58,7 @@ async loginUser(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Res
     res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true });
     
     // Optional: redirect to frontend with token or user info
-    res.redirect('http://localhost:4200/dashboard');
+    res.redirect('http://localhost:3000/auth/profile');
   }
 @Post('refresh-token')
 async refreshAccessToken(@Req() req: Request) {

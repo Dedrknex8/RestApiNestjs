@@ -10,10 +10,10 @@ export class User{
     @PrimaryGeneratedColumn()
     id : number
 
-    @Column({length : 15,unique:true})
+    @Column({length : 100,unique:true})
     email : string
 
-    @Column({length : 15})
+    @Column({length : 100})
     username : string
 
     @Column({select : false}) //this will not include password without explicitly calling it
