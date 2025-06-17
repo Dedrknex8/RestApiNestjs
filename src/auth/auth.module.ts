@@ -9,6 +9,7 @@ import { RolesGuards } from './guards/role.guard';
 import { JwtStratergy } from './startergies/jwt.startergy';
 import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
 import { EventsModule } from 'src/events/events.module';
+import { GoogleStrategy } from './startergies/google.strategy';
 @Module({
   imports: [
     TypeOrmModule.forFeature([User]),
@@ -24,7 +25,7 @@ import { EventsModule } from 'src/events/events.module';
     EventsModule,
   ],
   controllers: [AuthController],
-  providers: [AuthService,JwtStratergy,RolesGuards,LoginThrottlerClass],
+  providers: [AuthService,JwtStratergy,RolesGuards,LoginThrottlerClass,GoogleStrategy],
   exports : [AuthService,RolesGuards]
 })
 export class AuthModule {}

@@ -45,6 +45,7 @@ import { LoginMidleware } from './middleware/logger.middleware';
     PostsModule,
     AuthModule,
     FileuploadModule,
+    PostsModule,
     EventsModule,
   ],
   controllers: [AppController],

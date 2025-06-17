@@ -26,6 +26,6 @@ import { PostEventService } from './post-event.service';
         PostEventService,
         PostUploadListner,
     ],
-    exports : [UserEventService,FileEventService]
+    exports : [UserEventService,FileEventService,PostEventService]
 })
 export class EventsModule {}

@@ -20,7 +20,26 @@ export class AuthService {
         private ConfigService : ConfigService,
         private readonly userEventService : UserEventService
     ){}
+    
+    async validateOAuthLogin(oauthUser: { email: string; username: string; picture?: string }) {
+  let user = await this.userRepo.findOne({ where: { email: oauthUser.email } });
 
+  if (!user) {
+    user = this.userRepo.create({
+      email: oauthUser.email,
+      username: oauthUser.username,
+      password: '', // leave empty for OAuth users
+      role: Role.User,
+    });
+    await this.userRepo.save(user);
+    this.userEventService.emitUserRegistered(user);
+  }
+
+  const tokens = await this.generateToken(user);
+  this.userEventService.emitUserLogin(user);
+
+  return tokens;
+}
     async registerUser(RegisterDto : RegisterDto){
         const existUser = await this.userRepo.findOne({
             where : {email : RegisterDto.email}

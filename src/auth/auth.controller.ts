@@ -10,6 +10,7 @@ import { Roles } from './Decorators/roles.decorators';
 import { RolesGuards } from './guards/role.guard';
 import { LoginThrottlerClass } from './guards/ratelimit.throttlers.guards';
 import { Request, Response } from 'express';
+import { AuthGuard } from '@nestjs/passport';
 // import { SkipThrottle } from '@nestjs/throttler';
 
 @Controller('auth')
@@ -43,7 +44,22 @@ async loginUser(@Body() loginDto: LoginDto, @Res({ passthrough: true }) res: Res
 //         return token;
 //     }
 
+@Get('google')
+  @UseGuards(AuthGuard('google'))
+  async googleAuth() {}
 
+  @Get('google/redirect')
+  @UseGuards(AuthGuard('google'))
+  async googleAuthRedirect(@Req() req, @Res() res: Response) {
+    const tokens = await this.authservice.validateOAuthLogin(req.user);
+
+    // You can also emit an event like loginUser()
+    res.cookie('access_token', tokens.accessToken, { httpOnly: true });
+    res.cookie('refresh_token', tokens.refreshToken, { httpOnly: true });
+    
+    // Optional: redirect to frontend with token or user info
+    res.redirect('http://localhost:4200/dashboard');
+  }
 @Post('refresh-token')
 async refreshAccessToken(@Req() req: Request) {
     const refreshToken = req.cookies?.refresh_token;

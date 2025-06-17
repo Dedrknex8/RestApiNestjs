@@ -123,7 +123,7 @@ export class PostsService {
         
         //INVALID CACHE AFTER CREATING NEW POST
         await this.invalidCacheKeys();
-        this.postEventService.emitUSerPost(newPost);
+        this.postEventService.emitUSerPost(newPost)
         return this.postRespository.save(newPost);
 
 
